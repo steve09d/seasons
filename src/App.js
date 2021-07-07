@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import SeasonDisplay from './components/season/SeasonDisplay';
+import Spinner from './components/util/Spinner';
+
+class App extends React.Component {
+  /* constructor(props) {
+    super(props);
+    this.state = { lat: null, errorMsg: '' };
+  } */
+
+  state = { lat: null, errorMsg: '' };
+
+  componentDidMount() {
+    this.getLat();
+    console.log('Component rendered');
+  }
+
+  componentDidUpdate() {
+    console.log('Component updated - rerendered');
+  }
+
+  getLat = () => {
+    window.navigator.geolocation.getCurrentPosition(
+      position => this.setState({ lat: position.coords.latitude }),
+      err => this.setState({ errorMsg: err.message })
+    );
+  };
+
+  render() {
+    return (
+      <div>
+        {this.state.lat !== null && <SeasonDisplay lat={this.state.lat} />}
+
+        {this.state.errorMsg && (
+          <p>
+            <br />
+            ErrorMsg: {this.state.errorMsg}
+          </p>
+        )}
+
+        {this.state.lat === null && this.state.errorMsg === '' && (
+          <Spinner text='Please accept location request' />
+        )}
+      </div>
+    );
+  }
 }
 
 export default App;
